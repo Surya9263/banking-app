@@ -1,13 +1,88 @@
 var { Command } = require("commander");
-const User = require("./models/user.model");
 var program = new Command();
+const connect = require("./configs/db");
+const Account = require("./models/account.model");
 
-program.argument("<username>", "user login details");
+// Connect to MongoDB
+connect();
+
 program
-  .argument("[password]", "password for user, if needed", "default")
-  .action((username, password) => {
-    console.log("username", username);
-    console.log("password", password);
+  .command("CREATE")
+  .argument("<name>", "Account holder name")
+  .argument("<code>", "Account holder code")
+  .action((name, code) => {
+    Account.findOne({ code }, (err, existingAccount) => {
+      if (err) throw err;
+      if (existingAccount) {
+        console.log(`Account ${code} already exists`);
+        process.exit();
+      }
+    });
+    const account = new Account({ name, code, balance: 0 });
+    account.save((err) => {
+      if (err) throw err;
+      console.log(`Account ${name} created successfully`);
+      process.exit();
+    });
+  });
+
+program
+  .command("DEPOSIT")
+  .argument("<code>", "Account holder code")
+  .argument("<amount>", "Amount to deposit")
+  .action((code, amount) => {
+    Account.findOne({ code }, (err, account) => {
+      if (err) throw err;
+      if (!account) {
+        console.log(`Account ${code} not found`);
+        process.exit();
+      }
+      account.balance += parseFloat(amount);
+      account.save((err) => {
+        if (err) throw err;
+        console.log(`Deposited ₹${amount} into ${account.name}'s account`);
+        process.exit();
+      });
+    });
+  });
+
+program
+  .command("WITHDRAW")
+  .argument("<code>", "Account holder code")
+  .argument("<amount>", "Amount to deposit")
+  .action((code, amount) => {
+    Account.findOne({ code }, (err, account) => {
+      if (err) throw err;
+      if (!account) {
+        console.log(`Account ${code} not found`);
+        process.exit();
+      }
+      if (account.balance < amount) {
+        console.log(`Insufficient funds in ${code}'s account`);
+        process.exit();
+      }
+      account.balance -= parseFloat(amount);
+      account.save((err) => {
+        if (err) throw err;
+        console.log(`Withdrew ₹${amount} from ${code}'s account`);
+        process.exit();
+      });
+    });
+  });
+
+program
+  .command("BALANCE")
+  .argument("<code>", "Account holder code")
+  .action((code) => {
+    Account.findOne({ code }, (err, account) => {
+      if (err) throw err;
+      if (!account) {
+        console.log(`Account ${code} not found`);
+        process.exit();
+      }
+      console.log(`${account.name}'s account balance: ₹${account.balance}`);
+      process.exit();
+    });
   });
 
 program.parse(process.argv);
