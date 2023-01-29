@@ -3,14 +3,17 @@ var program = new Command();
 const connect = require("./configs/db");
 const Account = require("./models/account.model");
 
+// require and configure dotenv
+require("dotenv").config();
+
 // Connect to MongoDB
 connect();
 
 program
   .command("CREATE")
-  .argument("<name>", "Account holder name")
   .argument("<code>", "Account holder code")
-  .action((name, code) => {
+  .argument("<name>", "Account holder name")
+  .action((code,name) => {
     Account.findOne({ code }, (err, existingAccount) => {
       if (err) throw err;
       if (existingAccount) {
@@ -21,7 +24,7 @@ program
     const account = new Account({ name, code, balance: 0 });
     account.save((err) => {
       if (err) throw err;
-      console.log(`Account ${name} created successfully`);
+      console.log(`Account ${code} created successfully`);
       process.exit();
     });
   });
