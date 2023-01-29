@@ -3,9 +3,6 @@ var program = new Command();
 const connect = require("./configs/db");
 const Account = require("./models/account.model");
 
-// require and configure dotenv
-require("dotenv").config();
-
 // Connect to MongoDB
 connect();
 
@@ -13,7 +10,7 @@ program
   .command("CREATE")
   .argument("<code>", "Account holder code")
   .argument("<name>", "Account holder name")
-  .action((code,name) => {
+  .action((code, name) => {
     Account.findOne({ code }, (err, existingAccount) => {
       if (err) throw err;
       if (existingAccount) {
