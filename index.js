@@ -40,7 +40,7 @@ program
       account.balance += parseFloat(amount);
       account.save((err) => {
         if (err) throw err;
-        console.log(`Deposited ₹${amount} into ${account.name}'s account`);
+        console.log(`Deposited ₹${amount} into ${code}'s account`);
         process.exit();
       });
     });
