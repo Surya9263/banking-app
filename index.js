@@ -14,14 +14,14 @@ program
     Account.findOne({ code }, (err, existingAccount) => {
       if (err) throw err;
       if (existingAccount) {
-        console.log(`Account ${code} already exists`);
+        console.log(`Account with code ${code} already exists`);
         process.exit();
       }
     });
     const account = new Account({ name, code, balance: 0 });
     account.save((err) => {
       if (err) throw err;
-      console.log(`Account ${code} created successfully`);
+      console.log(`Account with code ${code} created successfully`);
       process.exit();
     });
   });

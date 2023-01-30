@@ -24,7 +24,7 @@ npm install
 
 ## *Sample I/O*
 
-- node index.js CREATE ACC001 KELP -> Account ACC001 created successfully
+- node index.js CREATE ACC001 KELP -> Account with code ACC001 created successfully
 
 - node index.js DEPOSIT ACC001 10000 -> Deposited ₹10000 into ACC001's account
 
