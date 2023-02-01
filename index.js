@@ -34,7 +34,7 @@ program
     Account.findOne({ code }, (err, account) => {
       if (err) throw err;
       if (!account) {
-        console.log(`Account ${code} not found`);
+        console.log(`Account with code ${code} not found`);
         process.exit();
       }
       account.balance += parseFloat(amount);
